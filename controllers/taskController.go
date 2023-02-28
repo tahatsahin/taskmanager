@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 	"net/http"
 	"taskmanager/common"
@@ -121,5 +122,48 @@ func GetTasks(w http.ResponseWriter, _ *http.Request) {
 	_, err = w.Write(j)
 	if err != nil {
 		return
+	}
+}
+
+// GetTaskById handler for HTTP GET - /tasks/{id}
+// returns a single task doc by given id
+func GetTaskById(w http.ResponseWriter, r *http.Request) {
+	// get id from the incoming url
+	vars := mux.Vars(r)
+	id := vars["id"]
+	ctx := NewContext()
+	defer ctx.Close()
+	c := ctx.DbCollection("tasks")
+	repo := &data.TaskRepository{C: c}
+	task, err := repo.GetById(id)
+	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			w.WriteHeader(http.StatusNoContent)
+			return
+		} else {
+			common.DisplayAppError(
+				w,
+				err,
+				"an unexpected error has occurred",
+				500,
+			)
+			return
+		}
+	}
+	if j, err := json.Marshal(&task); err != nil {
+		common.DisplayAppError(
+			w,
+			err,
+			"an unexpected error has occurred",
+			500,
+		)
+		return
+	} else {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		_, err := w.Write(j)
+		if err != nil {
+			return
+		}
 	}
 }

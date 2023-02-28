@@ -63,3 +63,17 @@ func (r *TaskRepository) GetTasks() ([]models.Task, error) {
 	}
 	return tasks, nil
 }
+
+// GetById returns a task by a given id
+func (r *TaskRepository) GetById(id string) (*models.Task, error) {
+	var result *models.Task
+	newId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		panic(err)
+	}
+	err = r.C.FindOne(context.TODO(), bson.M{"_id": newId}).Decode(&result)
+	if err == mongo.ErrNoDocuments {
+		return &models.Task{}, err
+	}
+	return result, nil
+}
