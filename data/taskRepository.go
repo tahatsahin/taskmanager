@@ -45,3 +45,21 @@ func (r *TaskRepository) UpdateTask(task *models.Task) (*models.Task, error) {
 	}
 	return task, nil
 }
+
+// GetTasks returns all tasks
+func (r *TaskRepository) GetTasks() ([]models.Task, error) {
+	cursor, err := r.C.Find(context.TODO(), bson.M{})
+	var tasks []models.Task
+	if err != nil {
+		log.Fatalf("cannot retrieve tasks %v", err)
+		return nil, err
+	}
+	for cursor.Next(context.TODO()) {
+		var result models.Task
+		if err := cursor.Decode(&result); err != nil {
+			log.Fatal(err)
+		}
+		tasks = append(tasks, result)
+	}
+	return tasks, nil
+}

@@ -94,3 +94,32 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 	}
 }
+
+// GetTasks handler for HTTP GET - /tasks
+// returns all task docs
+func GetTasks(w http.ResponseWriter, _ *http.Request) {
+	ctx := NewContext()
+	defer ctx.Close()
+	c := ctx.DbCollection("tasks")
+	repo := &data.TaskRepository{C: c}
+	tasks, err := repo.GetTasks()
+	if err != nil {
+		log.Fatal(err)
+	}
+	j, err := json.Marshal(TasksResource{Data: tasks})
+	if err != nil {
+		common.DisplayAppError(
+			w,
+			err,
+			"an unexpected error has occurred",
+			500,
+		)
+		return
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Header().Set("Content-Type", "application/json")
+	_, err = w.Write(j)
+	if err != nil {
+		return
+	}
+}
