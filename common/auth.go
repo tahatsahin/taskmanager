@@ -20,6 +20,7 @@ const (
 var (
 	verifyKey, signKey []byte
 	SignKey            *rsa.PrivateKey
+	VerifyKey          *rsa.PublicKey
 )
 
 // read the files
@@ -39,6 +40,11 @@ func initKeys() {
 	SignKey, err = jwt.ParseRSAPrivateKeyFromPEM(signKey)
 	if err != nil {
 		log.Fatalf("[SignKey]: %v\n", err)
+	}
+
+	VerifyKey, err = jwt.ParseRSAPublicKeyFromPEM(verifyKey)
+	if err != nil {
+		log.Fatalf("[VerifyKey]: %v", err)
 	}
 }
 
@@ -80,7 +86,7 @@ func Authorize(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
 			return nil, fmt.Errorf("[signingToken]: %v", ok)
 		}
-		return verifyKey, nil
+		return VerifyKey, nil
 	})
 	if err != nil || !token.Valid {
 		http.Error(w, fmt.Sprintf("{\"error\": \"%s %s\"}", "JWT not valid,", err), http.StatusUnauthorized)
