@@ -2,9 +2,13 @@ package common
 
 import (
 	"crypto/rsa"
+	"fmt"
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/golang-jwt/jwt/v5/request"
 	"log"
+	"net/http"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -53,4 +57,34 @@ func GenerateJWT(name, role string) (string, error) {
 		return "", err
 	}
 	return tokenString, nil
+}
+
+type TokenExtractor struct {
+}
+
+func (t TokenExtractor) ExtractToken(r *http.Request) (string, error) {
+	token := r.Header.Get("Authorization")
+	if token == "" {
+		token = r.FormValue("access_token")
+	}
+	if token == "" {
+		return "", request.ErrNoTokenInRequest
+	}
+	// for the sake of simplicity, extra spaces and type name Bearer are stripped
+	return strings.TrimSpace(strings.TrimPrefix(token, "Bearer")), nil
+}
+
+func Authorize(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+	// validate token
+	token, err := request.ParseFromRequest(r, TokenExtractor{}, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+			return nil, fmt.Errorf("[signingToken]: %v", ok)
+		}
+		return verifyKey, nil
+	})
+	if err != nil || !token.Valid {
+		http.Error(w, fmt.Sprintf("{\"error\": \"%s %s\"}", "JWT not valid,", err), http.StatusUnauthorized)
+	} else {
+		next(w, r)
+	}
 }

@@ -7,6 +7,6 @@ func InitRoutes() *mux.Router {
 	// routes for the user
 	router = SetUserRoutes(router)
 	// routes for the task
-	//router = SetTaskRoutes(router)
+	router = SetTaskRoutes(router)
 	return router
 }
