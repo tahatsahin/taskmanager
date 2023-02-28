@@ -31,7 +31,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	c := ctx.DbCollection("users")
 	repo := &data.UserRepository{C: c}
 	// insert user document
-	err = repo.CreateUser(*user)
+	user, err = repo.CreateUser(*user)
 	if err != nil {
 		return
 	}

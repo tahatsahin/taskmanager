@@ -15,7 +15,7 @@ type UserRepository struct {
 }
 
 // CreateUser creates a user with given user model
-func (r *UserRepository) CreateUser(user models.User) error {
+func (r *UserRepository) CreateUser(user models.User) (*models.User, error) {
 	objId := primitive.NewObjectID()
 	user.Id = objId
 	hPass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
@@ -26,8 +26,7 @@ func (r *UserRepository) CreateUser(user models.User) error {
 	// clear the incoming text password
 	user.Password = ""
 	_, err = r.C.InsertOne(context.TODO(), &user)
-	return err
-
+	return &user, err
 }
 
 // Login logs user in the system
