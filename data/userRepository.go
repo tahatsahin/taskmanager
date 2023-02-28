@@ -15,7 +15,7 @@ type UserRepository struct {
 }
 
 // CreateUser creates a user with given user model
-func (r *UserRepository) CreateUser(user models.User) (*models.User, error) {
+func (r *UserRepository) CreateUser(user *models.User) (*models.User, error) {
 	objId := primitive.NewObjectID()
 	user.Id = objId
 	hPass, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
@@ -25,12 +25,12 @@ func (r *UserRepository) CreateUser(user models.User) (*models.User, error) {
 	user.HashPassword = hPass
 	// clear the incoming text password
 	user.Password = ""
-	_, err = r.C.InsertOne(context.TODO(), &user)
-	return &user, err
+	_, err = r.C.InsertOne(context.TODO(), user)
+	return user, err
 }
 
 // Login logs user in the system
-func (r *UserRepository) Login(user models.User) (u models.User, err error) {
+func (r *UserRepository) Login(user *models.User) (u *models.User, err error) {
 	var res models.User
 	err = r.C.FindOne(context.TODO(), bson.M{"email": user.Email}).Decode(&res)
 	if err != nil {
@@ -39,8 +39,8 @@ func (r *UserRepository) Login(user models.User) (u models.User, err error) {
 
 	err = bcrypt.CompareHashAndPassword(res.HashPassword, []byte(user.Password))
 	if err != nil {
-		u = models.User{}
+		u = &models.User{}
 		return u, err
 	}
-	return res, nil
+	return &res, nil
 }

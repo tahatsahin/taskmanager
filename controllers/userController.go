@@ -31,7 +31,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	c := ctx.DbCollection("users")
 	repo := &data.UserRepository{C: c}
 	// insert user document
-	user, err = repo.CreateUser(*user)
+	user, err = repo.CreateUser(user)
 	if err != nil {
 		return
 	}
@@ -57,6 +57,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 // Login handler for HTTP POST - /users/login
 // authenticate with username and password
+// TODO: If there are no such email registered, route to register page.
 func Login(w http.ResponseWriter, r *http.Request) {
 	var dataResource LoginResource
 	var token string
@@ -82,7 +83,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	repo := &data.UserRepository{C: c}
 
 	// auth the login user
-	if user, err := repo.Login(loginUser); err != nil {
+	if user, err := repo.Login(&loginUser); err != nil {
 		common.DisplayAppError(
 			w,
 			err,
@@ -105,7 +106,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		user.HashPassword = nil
 		log.Println(token)
 		authUser := AuthUserModel{
-			User:  user,
+			User:  *user,
 			Token: token,
 		}
 		j, err := json.Marshal(AuthUserResource{Data: authUser})
