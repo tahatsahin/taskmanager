@@ -167,3 +167,25 @@ func GetTaskById(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
+// DeleteTask handler for HTTP DELETE - /tasks/{id}
+// deletes task by given id
+func DeleteTask(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+	ctx := NewContext()
+	defer ctx.Close()
+	c := ctx.DbCollection("tasks")
+	repo := &data.TaskRepository{C: c}
+	err := repo.DeleteById(id)
+	if err != nil {
+		common.DisplayAppError(
+			w,
+			err,
+			"an unexpected error has occurred",
+			500,
+		)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
+}

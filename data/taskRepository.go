@@ -69,11 +69,25 @@ func (r *TaskRepository) GetById(id string) (*models.Task, error) {
 	var result *models.Task
 	newId, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
-		panic(err)
+		log.Fatalf("cannot find task by given id")
 	}
 	err = r.C.FindOne(context.TODO(), bson.M{"_id": newId}).Decode(&result)
 	if err == mongo.ErrNoDocuments {
 		return &models.Task{}, err
 	}
 	return result, nil
+}
+
+// DeleteById deletes a task from db
+func (r *TaskRepository) DeleteById(id string) error {
+	newId, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		log.Fatalf("cannot find task by given id")
+	}
+	_, err = r.C.DeleteOne(context.TODO(), bson.M{"_id": newId})
+	if err != nil {
+		log.Fatalf("couldn't delete task: %v", err)
+		return err
+	}
+	return nil
 }
