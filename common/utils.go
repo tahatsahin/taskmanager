@@ -10,7 +10,7 @@ import (
 )
 
 type configuration struct {
-	SERVER, HOST, DBUSER, PWD, URI, Database string
+	SERVER, HOST, DBUSER, PWD, URI, Database, DBURI string
 }
 
 type (
@@ -28,7 +28,7 @@ type (
 var AppConfig configuration
 
 func initConfig() {
-	err := godotenv.Load(".env")
+	err := godotenv.Load("common/.env")
 	if err != nil {
 		panic(err)
 	}
@@ -44,6 +44,7 @@ func loadAppConfig() {
 		PWD:      os.Getenv("PWD"),
 		URI:      fmt.Sprintf("%v://%v:%v@%v", AppConfig.SERVER, AppConfig.DBUSER, AppConfig.PWD, AppConfig.HOST),
 		Database: os.Getenv("DATABASE"),
+		DBURI:    os.Getenv("DBURI"),
 	}
 }
 
