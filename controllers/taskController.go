@@ -13,6 +13,7 @@ import (
 
 // CreateTask handler for HTTP POST - /tasks
 // insert a new task doc
+// TODO: Create task with a easier due date format like "DD.MM.YYYY"
 func CreateTask(w http.ResponseWriter, r *http.Request) {
 	var dataResource TaskResource
 	// decode incoming json
