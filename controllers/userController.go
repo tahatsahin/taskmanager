@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"taskmanager/common"
 	"taskmanager/data"
@@ -35,7 +34,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		return
 	}
-	// clean-up the hashpassword to eliminate it from response
+	// clean-up the hashpassword from response
 	user.HashPassword = nil
 	if j, err := json.Marshal(UserResource{Data: *user}); err != nil {
 		common.DisplayAppError(
@@ -104,7 +103,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		}
 		w.Header().Set("Content-Type", "application/json")
 		user.HashPassword = nil
-		log.Println(token)
 		authUser := AuthUserModel{
 			User:  *user,
 			Token: token,

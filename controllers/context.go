@@ -21,6 +21,7 @@ func (c *Context) DbCollection(name string) *mongo.Collection {
 	return c.MongoSession.Client().Database(common.AppConfig.Database).Collection(name)
 }
 
+// NewContext creates context for mongodb session
 func NewContext() *Context {
 	session := common.GetSession()
 	ctx := &Context{

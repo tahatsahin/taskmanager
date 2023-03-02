@@ -11,6 +11,7 @@ import (
 
 var session mongo.Session
 
+// GetSession returns existing session, if there isn't any, it creates one
 func GetSession() mongo.Session {
 	if session == nil {
 		createDbSession()
@@ -18,6 +19,7 @@ func GetSession() mongo.Session {
 	return session
 }
 
+// createDbSession creates a database session with given Database uri given in .env file
 func createDbSession() {
 	serverAPIOptions := options.ServerAPI(options.ServerAPIVersion1)
 	clientOptions := options.Client().ApplyURI(AppConfig.DBURI).SetServerAPIOptions(serverAPIOptions)
@@ -31,8 +33,10 @@ func createDbSession() {
 	}
 }
 
+// addIndexes adds indexes to mongodb database
 func addIndexes() {
 	var err error
+	// define indexes
 	userIndex := mongo.IndexModel{
 		Keys: bson.M{
 			"email": 1,
@@ -45,23 +49,18 @@ func addIndexes() {
 		},
 		Options: nil,
 	}
-	noteIndex := mongo.IndexModel{
-		Keys: bson.M{
-			"taskid": 1,
-		},
-		Options: nil,
-	}
-	// add indexes into mongodb
+	// get a session
 	session := GetSession()
 	defer session.EndSession(context.TODO())
 
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
+	// get collections
 	userCol := session.Client().Database(AppConfig.Database).Collection("users")
 	taskCol := session.Client().Database(AppConfig.Database).Collection("tasks")
-	noteCol := session.Client().Database(AppConfig.Database).Collection("notes")
 
+	// create indexes on mongodb
 	_, err = userCol.Indexes().CreateOne(ctx, userIndex)
 	if err != nil {
 		log.Fatalf("[userIndexCreate]: %v", err)
@@ -69,10 +68,6 @@ func addIndexes() {
 	_, err = taskCol.Indexes().CreateOne(ctx, taskIndex)
 	if err != nil {
 		log.Fatalf("[taskIndexCreate]: %v", err)
-	}
-	_, err = noteCol.Indexes().CreateOne(ctx, noteIndex)
-	if err != nil {
-		log.Fatalf("[noteIndexCreate]: %v", err)
 	}
 
 }

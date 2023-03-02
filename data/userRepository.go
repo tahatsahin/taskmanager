@@ -10,6 +10,7 @@ import (
 	"taskmanager/models"
 )
 
+// UserRepository creates a User struct for mongodb collection
 type UserRepository struct {
 	C *mongo.Collection
 }

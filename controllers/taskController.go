@@ -15,6 +15,7 @@ import (
 // insert a new task doc
 // TODO: Create task with a easier due date format like "DD.MM.YYYY"
 func CreateTask(w http.ResponseWriter, r *http.Request) {
+	// create a data variable to store
 	var dataResource TaskResource
 	// decode incoming json
 	err := json.NewDecoder(r.Body).Decode(&dataResource)
@@ -27,12 +28,15 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 		)
 		return
 	}
+	// take data into task
 	task := &dataResource.Data
+	// create context
 	ctx := NewContext()
 	defer ctx.Close()
+	// get db collection
 	c := ctx.DbCollection("tasks")
 	repo := &data.TaskRepository{C: c}
-	// insert
+	// insert data
 	task, err = repo.CreateTask(task)
 	if err != nil {
 		return
@@ -60,6 +64,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	// get id from request
 	vars := mux.Vars(r)
+	// convert hex id to objectID
 	id, err := primitive.ObjectIDFromHex(vars["id"])
 	if err != nil {
 		log.Fatalf("cannot get id from request: %v", err)
@@ -129,7 +134,7 @@ func GetTasks(w http.ResponseWriter, _ *http.Request) {
 // GetTaskById handler for HTTP GET - /tasks/{id}
 // returns a single task doc by given id
 func GetTaskById(w http.ResponseWriter, r *http.Request) {
-	// get id from the incoming url
+	// get id from request
 	vars := mux.Vars(r)
 	id := vars["id"]
 	ctx := NewContext()

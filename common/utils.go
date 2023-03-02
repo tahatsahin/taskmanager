@@ -9,10 +9,12 @@ import (
 	"os"
 )
 
+// define a configuration struct to store the variables in .env file
 type configuration struct {
 	SERVER, HOST, DBUSER, PWD, URI, Database, DBURI string
 }
 
+// define an error struct
 type (
 	appError struct {
 		Error      string `json:"error"`
@@ -27,6 +29,7 @@ type (
 // AppConfig holds the configuration values from .env file
 var AppConfig configuration
 
+// initConfig loads the .env file
 func initConfig() {
 	err := godotenv.Load("common/.env")
 	if err != nil {
@@ -48,6 +51,7 @@ func loadAppConfig() {
 	}
 }
 
+// DisplayAppError creates a standard error message for HTTP responses
 func DisplayAppError(w http.ResponseWriter, handlerError error, message string, code int) {
 	errObj := appError{
 		Error:      handlerError.Error(),

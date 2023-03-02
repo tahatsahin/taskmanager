@@ -7,6 +7,7 @@ import (
 	"taskmanager/controllers"
 )
 
+// SetTaskRoutes sets routes for /task
 func SetTaskRoutes(router *mux.Router) *mux.Router {
 	taskRouter := mux.NewRouter()
 	taskRouter.HandleFunc("/tasks", controllers.CreateTask).Methods("POST")

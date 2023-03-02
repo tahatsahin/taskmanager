@@ -11,11 +11,12 @@ import (
 	"time"
 )
 
+// TaskRepository creates a Task struct for mongodb collection
 type TaskRepository struct {
 	C *mongo.Collection
 }
 
-// CreateTask Create creates a new task
+// CreateTask creates a new task
 func (r *TaskRepository) CreateTask(task *models.Task) (*models.Task, error) {
 	objId := primitive.NewObjectID()
 	task.Id = objId

@@ -2,6 +2,7 @@ package routers
 
 import "github.com/gorilla/mux"
 
+// InitRoutes initializes routers
 func InitRoutes() *mux.Router {
 	router := mux.NewRouter().StrictSlash(false)
 	// routes for the user

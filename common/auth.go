@@ -48,6 +48,7 @@ func initKeys() {
 	}
 }
 
+// GenerateJWT generates a token which is signed with proper claims.
 func GenerateJWT(name, role string) (string, error) {
 	claims := make(jwt.MapClaims)
 	claims["iss"] = "admin"
@@ -65,9 +66,11 @@ func GenerateJWT(name, role string) (string, error) {
 	return tokenString, nil
 }
 
+// TokenExtractor struct to extract token from request
 type TokenExtractor struct {
 }
 
+// ExtractToken takes token from the request header and trims spaces/prefixes
 func (t TokenExtractor) ExtractToken(r *http.Request) (string, error) {
 	token := r.Header.Get("Authorization")
 	if token == "" {
@@ -80,6 +83,7 @@ func (t TokenExtractor) ExtractToken(r *http.Request) (string, error) {
 	return strings.TrimSpace(strings.TrimPrefix(token, "Bearer")), nil
 }
 
+// Authorize is the gateway for certain pages. Users cannot reach resources (/tasks) without authorization
 func Authorize(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	// validate token
 	token, err := request.ParseFromRequest(r, TokenExtractor{}, func(token *jwt.Token) (interface{}, error) {
