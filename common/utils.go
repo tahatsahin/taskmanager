@@ -3,10 +3,11 @@ package common
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/joho/godotenv"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/joho/godotenv"
 )
 
 // define a configuration struct to store the variables in .env file
@@ -31,7 +32,7 @@ var AppConfig configuration
 
 // initConfig loads the .env file
 func initConfig() {
-	err := godotenv.Load("common/.env")
+	err := godotenv.Load(".env")
 	if err != nil {
 		panic(err)
 	}

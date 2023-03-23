@@ -2,13 +2,14 @@ package controllers
 
 import (
 	"encoding/json"
-	"github.com/gorilla/mux"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"log"
 	"net/http"
 	"taskmanager/common"
 	"taskmanager/data"
+
+	"github.com/gorilla/mux"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // CreateTask handler for HTTP POST - /tasks
@@ -67,7 +68,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	// convert hex id to objectID
 	id, err := primitive.ObjectIDFromHex(vars["id"])
 	if err != nil {
-		log.Fatalf("cannot get id from request: %v", err)
+		log.Fatalf("cannot get id from request: %v, %v", err, id)
 	}
 	var dataResource TaskResource
 	// decode the incoming task json
