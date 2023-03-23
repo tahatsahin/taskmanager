@@ -18,7 +18,12 @@ type TaskRepository struct {
 
 // CreateTask creates a new task
 func (r *TaskRepository) CreateTask(task *models.Task) (*models.Task, error) {
-	objId := primitive.NewObjectID()
+	var objId primitive.ObjectID
+	if task.Id == primitive.NilObjectID {
+		objId = primitive.NewObjectID()
+	} else {
+		objId = task.Id
+	}
 	task.Id = objId
 	task.CreatedOn = time.Now()
 	task.Status = "created"
