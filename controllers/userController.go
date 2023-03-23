@@ -8,6 +8,8 @@ import (
 	"taskmanager/models"
 )
 
+const dbCollectionUser = "users"
+
 // Register handler for HTTP POST - /users/register
 // add a new user doc
 func Register(w http.ResponseWriter, r *http.Request) {
@@ -27,7 +29,7 @@ func Register(w http.ResponseWriter, r *http.Request) {
 	ctx := NewContext()
 	defer ctx.Close()
 	// get users collection
-	c := ctx.DbCollection("users")
+	c := ctx.DbCollection(dbCollectionUser)
 	repo := &data.UserRepository{C: c}
 	// insert user document
 	user, err = repo.CreateUser(user)
@@ -78,7 +80,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 	ctx := NewContext()
 	defer ctx.Close()
-	c := ctx.DbCollection("users")
+	c := ctx.DbCollection(dbCollectionUser)
 	repo := &data.UserRepository{C: c}
 
 	// auth the login user
@@ -123,4 +125,35 @@ func Login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+}
+
+func DeleteUser(w http.ResponseWriter, r *http.Request) {
+	var dataResource UserResource
+
+	err := json.NewDecoder(r.Body).Decode(&dataResource)
+	if err != nil {
+		common.DisplayAppError(
+			w,
+			err,
+			"invalid user data",
+			500,
+		)
+		return
+	}
+	userModel := dataResource.Data
+	ctx := NewContext()
+	defer ctx.Close()
+	c := ctx.DbCollection(dbCollectionUser)
+	repo := &data.UserRepository{C: c}
+
+	if err := repo.Delete(&userModel); err != nil {
+		common.DisplayAppError(
+			w,
+			err,
+			"invalid user credentials",
+			401,
+		)
+		return
+	}
+	w.WriteHeader(http.StatusNoContent)
 }

@@ -12,6 +12,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+const dbCollectionTask = "tasks"
+
 // CreateTask handler for HTTP POST - /tasks
 // insert a new task doc
 // TODO: Create task with a easier due date format like "DD.MM.YYYY"
@@ -35,7 +37,7 @@ func CreateTask(w http.ResponseWriter, r *http.Request) {
 	ctx := NewContext()
 	defer ctx.Close()
 	// get db collection
-	c := ctx.DbCollection("tasks")
+	c := ctx.DbCollection(dbCollectionTask)
 	repo := &data.TaskRepository{C: c}
 	// insert data
 	task, err = repo.CreateTask(task)
@@ -86,7 +88,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 	task.Id = id
 	ctx := NewContext()
 	defer ctx.Close()
-	c := ctx.DbCollection("tasks")
+	c := ctx.DbCollection(dbCollectionTask)
 	repo := &data.TaskRepository{C: c}
 
 	// update an existing task document
@@ -108,7 +110,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 func GetTasks(w http.ResponseWriter, _ *http.Request) {
 	ctx := NewContext()
 	defer ctx.Close()
-	c := ctx.DbCollection("tasks")
+	c := ctx.DbCollection(dbCollectionTask)
 	repo := &data.TaskRepository{C: c}
 	tasks, err := repo.GetTasks()
 	if err != nil {
@@ -140,7 +142,7 @@ func GetTaskById(w http.ResponseWriter, r *http.Request) {
 	id := vars["id"]
 	ctx := NewContext()
 	defer ctx.Close()
-	c := ctx.DbCollection("tasks")
+	c := ctx.DbCollection(dbCollectionTask)
 	repo := &data.TaskRepository{C: c}
 	task, err := repo.GetById(id)
 	if err != nil {
@@ -182,7 +184,7 @@ func DeleteTask(w http.ResponseWriter, r *http.Request) {
 	id := vars["id"]
 	ctx := NewContext()
 	defer ctx.Close()
-	c := ctx.DbCollection("tasks")
+	c := ctx.DbCollection(dbCollectionTask)
 	repo := &data.TaskRepository{C: c}
 	err := repo.DeleteById(id)
 	if err != nil {
