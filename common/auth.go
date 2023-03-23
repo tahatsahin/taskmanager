@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 )
@@ -27,12 +28,24 @@ var (
 func initKeys() {
 	var err error
 
-	signKey, err = os.ReadFile(privKeyPath)
+	absPriv, err := filepath.Abs(privKeyPath)
+	absPriv = strings.Split(absPriv, "taskmanager")[0] + "taskmanager\\keys\\private.rsa"
+	if err != nil {
+		log.Fatalf("cannot get absolute path: %v", err)
+	}
+
+	absPub, err := filepath.Abs(pubKeyPath)
+	absPub = strings.Split(absPub, "taskmanager")[0] + "taskmanager\\keys\\public.rsa"
+	if err != nil {
+		log.Fatalf("cannot get absolute path: %v", err)
+	}
+
+	signKey, err = os.ReadFile(absPriv)
 	if err != nil {
 		log.Fatalf("[initKeys]: %s\n", err)
 	}
 
-	verifyKey, err = os.ReadFile(pubKeyPath)
+	verifyKey, err = os.ReadFile(absPub)
 	if err != nil {
 		log.Fatalf("[initKeys]: %s\n", err)
 	}

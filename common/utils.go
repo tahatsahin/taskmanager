@@ -6,6 +6,8 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
@@ -32,7 +34,13 @@ var AppConfig configuration
 
 // initConfig loads the .env file
 func initConfig() {
-	err := godotenv.Load(".env")
+	absPath, err := filepath.Abs("common/.env")
+	absPath = strings.Split(absPath, "taskmanager")[0] + "taskmanager\\common\\.env"
+	if err != nil {
+		log.Fatalf("cannot get absolute path: %v", err)
+	}
+
+	err = godotenv.Load(os.ExpandEnv(absPath))
 	if err != nil {
 		panic(err)
 	}
