@@ -3,14 +3,14 @@
 - This is a CRUD practice project in Go.
 - Used technologies: Go, JWT, HTTP-Negroni-DotEnv-Gorilla-Crypto Packages, MongoDB
 - Endpoints:
-  - /users: DELETE - Delete registered user
-  - /users/register: POST - Register user
-  - /users/login: POST - Login with registered user credentials
-  - /tasks: GET - Get all created tasks, note that all /tasks endpoints are restricted for unknown users.
-  - /tasks: POST - Create a new task
-  - /tasks/{id}: GET - Get a specific task by given id
-  - /tasks/{id}: PUT - Update a specific task by given id
-  - /tasks/{id}: DELETE - Delete task by given id
+  - **/users: DELETE** - Delete registered user
+  - **/users/register: POST** - Register user
+  - **/users/login: POST** - Login with registered user credentials
+  - **/tasks: GET** - Get all created tasks, note that all /tasks endpoints are restricted for unknown users.
+  - **/tasks: POST** - Create a new task
+  - **/tasks/{id}: GET** - Get a specific task by given id
+  - **/tasks/{id}: PUT** - Update a specific task by given id
+  - **/tasks/{id}: DELETE** - Delete task by given id
 
 - Gorilla Mux is used for routing
 - Negroni is used for chaining routes
