@@ -99,7 +99,7 @@ func UpdateTask(w http.ResponseWriter, r *http.Request) {
 		)
 		return
 	} else {
-		w.WriteHeader(http.StatusNoContent)
+		w.WriteHeader(http.StatusCreated)
 	}
 }
 
