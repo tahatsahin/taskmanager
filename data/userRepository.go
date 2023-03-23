@@ -45,3 +45,9 @@ func (r *UserRepository) Login(user *models.User) (u *models.User, err error) {
 	}
 	return &res, nil
 }
+
+// Delete deletes user from the system
+func (r *UserRepository) Delete(user *models.User) error {
+	_, err := r.C.DeleteOne(context.TODO(), bson.M{"email": user.Email})
+	return err
+}

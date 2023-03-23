@@ -12,10 +12,10 @@ import (
 
 func TestCreateTask(t *testing.T) {
 	common.StartUp()
-
-	file, err := os.Open("testData.json")
+	// TODO: change this to abs path aswell
+	file, err := os.Open("testTaskData.json")
 	if err != nil {
-		log.Fatalf("cannot open file %v", err)
+		log.Fatalf("cannot open test file %v", err)
 	}
 	defer func(file *os.File) {
 		err := file.Close()
@@ -57,7 +57,7 @@ func TestGetTasks(t *testing.T) {
 func TestUpdateTask(t *testing.T) {
 	common.StartUp()
 
-	file, err := os.Open("testData.json")
+	file, err := os.Open("testTaskData.json")
 	if err != nil {
 		log.Fatalf("cannot open file %v", err)
 	}
